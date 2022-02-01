@@ -13,7 +13,7 @@ def show_colour(colour, name="Colours"):
     show(name, image)
 
 def show_matplot(img):
-    plt.figure(figsize=(10,10))
+    plt.figure(figsize=(8,8))
     plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     plt.show()
     
