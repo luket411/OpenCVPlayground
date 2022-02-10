@@ -37,8 +37,8 @@ img_file = "assets/clean_board.jpg"
         # print( f"lines.shape:{lines.shape}" if lines is not None else "lines.shape:None")
 
 def find_corners(img_file, show_output=False, debug_print=False):
-    img = blur_and_colour_shift(img_file)
-    canny_edges = run_canny(img)
+    img = blur_and_colour_shift(img_file, show_output)
+    canny_edges = run_canny(img, show_output=show_output)
     line_points = run_hough(canny_edges, debug_print=debug_print)
     line_details = gather_line_details(line_points)
     norm_grads = normalize_grads(line_details[0])
@@ -59,24 +59,28 @@ def find_corners(img_file, show_output=False, debug_print=False):
     return corners
 
 
-def blur_and_colour_shift(img_file):
+def blur_and_colour_shift(img_file, show_output):
     img = cv2.imread(img_file, 1)
-    # show(img)
+    if show_output:
+        show(img)
 
     # Heavily blur the image, this reduces the amount of edges detected on the board and background
     img = cv2.GaussianBlur(img, (15,15),45)
-    # show(img)
+    if show_output:
+        show(img)
 
     # Get the middle 15-85% of a selected white region and remove it
     img = get_image_board_outline(img, 15)
-    # show(img)
+    if show_output:
+        show(img)
 
     # Convert the image to grey
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # show(img)
+    if show_output:
+        show(img)
     return img
 
-def run_canny(img, threshold1=210, threshold2=255, edges=1, apertureSize=3, L2gradient=None):
+def run_canny(img, threshold1=210, threshold2=255, edges=1, apertureSize=3, L2gradient=None, show_output=False):
     canny_edges = cv2.Canny(
         image=img,
         threshold1=threshold1, # Only detect sharp changes
@@ -85,6 +89,9 @@ def run_canny(img, threshold1=210, threshold2=255, edges=1, apertureSize=3, L2gr
         apertureSize=apertureSize,
         L2gradient=L2gradient
     )
+    
+    if show_output:
+        show(canny_edges)
     
     return canny_edges
 
@@ -215,3 +222,4 @@ def find_intersection_points(edges):
 
 if __name__ == "__main__":
     print(find_corners(img_file, True, True))
+        
